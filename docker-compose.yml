@@ -1,0 +1,69 @@
+version: "3.7"
+
+networks:
+  default:
+
+volumes:
+  #ghost:
+  mariadb:
+  netdata:
+  traefik:
+
+services:
+  # https://hub.docker.com/_/ghost
+  ghost4:
+    image: ghost:latest
+    restart: unless-stopped
+    environment:
+      TZ: "${TZ}"
+      database__client: mysql
+      database__connection__host: mariadb
+      database__connection__user: "${MYSQL_USER}"
+      database__connection__password: "${MYSQL_PASSWORD}"
+      database__connection__database: "${MYSQL_DATABASE}"
+      url: "${GHOST_HOST}"
+    depends_on:
+      - mariadb
+      - traefik
+    networks:
+      - default
+    volumes:
+      - "./pwd/content:/var/lib/ghost/content"
+
+  # https://docs.linuxserver.io/images/docker-ma
+  mariadb:
+    image: lscr.io/linuxserver/mariadb
+    restart: unless-stopped
+    environment:
+      PUID: "${PUID}"
+      PGID: "${PGID}"
+      TZ: "${TZ}"
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      MYSQL_DATABASE: "${MYSQL_DATABASE}" #optional
+      MYSQL_USER: "${MYSQL_USER}" #optional
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD}" #optional
+    networks:
+      - default
+    volumes:
+      - "mariadb:/config"
+
+  # https://hub.docker.com/r/netdata/netdata
+  netdata:
+    image: netdata/netdata
+    restart: unless-stopped
+    hostname: ${NETDATA_HOST}
+    environment:
+      PGID: ${DOCKER_PGID}
+      TZ: ${TZ}
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - apparmor:unconfined
+    volumes:
+      - /etc/passwd:/host/etc/passwd:ro
+      - /etc/group:/host/etc/group:ro
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - default
