@@ -18,3 +18,24 @@
 - dedicated server or PC
 - [docker](https://docs.docker.com/install/linux/docker-ce/debian/) and [docker-compose](https://docs.docker.com/compose/install/#install-compose)
 - domain with configurable sub-domains (eg. netdata.example.com)
+
+## Deployment
+
+Pull and deploy containers with docker-compose.
+
+```bash
+docker-compose pull
+```
+```bash
+docker-compose up -d
+```
+
+Add credentials for basic http auth. The first user added requires `htpasswd -c`
+in order to create the password file. Subsequent users should only use `htpasswd` to avoid
+overwriting the file.
+
+```bash
+docker-compose exec traefik apk add --no-cache apache2-utils
+docker-compose exec traefik htpasswd -c /etc/traefik/.htpasswd <user1>
+docker-compose exec traefik htpasswd /etc/traefik/.htpasswd <user2>
+```
