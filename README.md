@@ -36,6 +36,10 @@ overwriting the file.
 
 ```bash
 docker-compose exec traefik apk add --no-cache apache2-utils
+```
+```bash
 docker-compose exec traefik htpasswd -c /etc/traefik/.htpasswd <user1>
+```
+```bash
 docker-compose exec traefik htpasswd /etc/traefik/.htpasswd <user2>
 ```
