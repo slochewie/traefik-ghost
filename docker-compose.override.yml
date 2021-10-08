@@ -8,8 +8,9 @@ services:
       traefik.docker.network: traefik-ghost_default
       traefik.http.routers.ghost.tls.certresolver: prod
       traefik.http.routers.ghost.rule: Host(`${GHOST_HOST}`)
-      traefik.http.services.ghost.loadbalancer.server.port: 2368
-      traefik.http.services.ghost.loadbalancer.server.scheme: http
+      traefik.http.routers.ghost.middlewares: hsts-header
+#      traefik.http.services.ghost.loadbalancer.server.port: 2368
+#      traefik.http.services.ghost.loadbalancer.server.scheme: http
 
   mariadb:
     labels:
