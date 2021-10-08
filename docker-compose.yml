@@ -28,7 +28,7 @@ services:
     networks:
       - default
     volumes:
-      - "./pwd/content:/var/lib/ghost/content"
+      - "./content:/var/lib/ghost/content"
 
   # https://docs.linuxserver.io/images/docker-ma
   mariadb:
